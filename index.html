@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Validator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    
+</head>
+<body>
+    <div class="container">
+        <h1>News Validator</h1>
+        <form id="newsForm">            
+            <label for="newsText">Article:</label><br>
+            <textarea id="newsText" name="newsText" rows="8" cols="50" required></textarea><br>
+            <button type="submit">Validate</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Ese&amp;Hamzar, All Rights Reserved</p>
+        <p>Designed by Ese&amp;Hamzar</p>
+    </footer>
+
+    <script>
+        document.getElementById('newsForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const newsText = document.getElementById('newsText').value;
+
+            try {
+                const response = await fetch('/detect-news', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text: newsText })
+                });
+
+                const result = await response.json();
+
+                document.getElementById('result').innerHTML = `
+                    <h2>News Detection Results:</h2>
+                    <p>Logistic Regression Prediction: ${result.LR_prediction}</p>
+                    <p>Decision Tree Prediction: ${result.DT_prediction}</p>
+                    <p>Random Forest Prediction: ${result.RF_prediction}</p>
+                `;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
